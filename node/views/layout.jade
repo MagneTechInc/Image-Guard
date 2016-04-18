@@ -9,13 +9,13 @@ html
 
   body
     nav(class="navbar navbar-inverse navbar-fixed-top")
-      div(class="container-fluid")
-        div(class="navbar-header")
-          button(type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation")
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle(type="button" data-toggle="collapse" data-target=".navbar-collapse")
             span(class="icon-bar")
             span(class="icon-bar")
             span(class="icon-bar")
-          a(class="navbar-brand" href="/") MagneTech
+          a.navbar-brand(href="/") MagneTech
         div(class="collapse navbar-collapse")
           ul(class="nav navbar-nav")
             li
@@ -23,12 +23,23 @@ html
             li
               a(target="_blank" href="https://github.com/MagneTechInc/Image-Guard") Code
             li
-              a(target="_blank" href="https://www.google.com") Google
-          ul(class="nav navbar-nav navbar-right")
-            li
-              a(href="signup") Sigh Up
-                span(class="glyphicon glyphicon-user")
-            li
-              a(href="login") Login
-                span(class="glyphicon glyphicon-log-in")
-    block content
+              a(href="/users/profile") Profile
+          if session.username
+            ul(class="nav navbar-nav navbar-right")
+              li
+                a(href="/users/info") #{session.username}
+                  span(class="glyphicon glyphicon-user")
+              li
+                a(href="/users/logout") Logout
+                  span(class="glyphicon glyphicon-log-in")
+          else
+            ul(class="nav navbar-nav navbar-right")
+              li
+                a(href="/signup") Sigh Up
+                  span(class="glyphicon glyphicon-user")
+              li
+                a(href="/login") Login
+                  span(class="glyphicon glyphicon-log-in")
+
+    .container
+      block content
