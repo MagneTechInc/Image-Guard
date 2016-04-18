@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    h1=user.username
+    table(class="table")
+        tbody
+            tr
+                th Email
+                td=user.email
+            tr
+                th Image
+                td
+                    img(src=user.img_path,alt="None img",width=300,height=300)

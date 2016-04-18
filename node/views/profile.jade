@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h1.
+        Info
+    table(class="table")
+        thead
+            th username
+            th age
+        tbody
+            each user, i in userlist
+                tr
+                    td=user.username
+                    td=user.email
+                    td
+                        img(src=user.img_path, alt="No pic", height="42", width="42")

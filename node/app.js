@@ -5,9 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var mongo = require('mongodb');
+var monk = require('monk');
+var multer = require('multer');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var db = monk('localhost:27017/ge');
 
 var app = express();
 
@@ -30,6 +34,11 @@ app.use(function(req, res, next){
   res.locals.session = req.session;
   next();
 });
+app.use(function(req,res,next){
+  req.db = db;
+  next();
+});
+app.use(multer({dest:'../public/images'}).any());
 
 app.use('/', routes);
 app.use('/users', users);

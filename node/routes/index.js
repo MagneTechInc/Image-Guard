@@ -15,6 +15,7 @@ router.get('/signup', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
+
 /* GET password reset form page. */
 router.get('/password_reset', function(req, res, next) {
   res.render('password_reset');
