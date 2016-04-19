@@ -81,7 +81,7 @@ router.post('/login_password', function(req, res, next){
         res.json({ok:true});
       } else {
         console.log("wrong username or password");
-        res.json({data:"wrong username or password"});
+        res.json(401,{data:"wrong username or password"});
       }
     }
   });
