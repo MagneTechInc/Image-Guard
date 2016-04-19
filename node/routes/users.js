@@ -41,23 +41,27 @@ router.post('/login', function(req, res, next){
       }
     }
   });
-
 });
 
 router.post('/login_password', function(req, res, next){
+  console.log("----------------------");
   console.log(req.body);
+  console.log(req.body.username);
+  console.log(req.body.password);
   var db = req.db;
   var users = db.get('users');
   users.findOne({username: req.body.username}, function(err, docs){
     if (err){
       res.send(err.stack);
     } else {
-      console.log('login_password info' + docs)
+      console.log("----------docs--------------");
+      console.log(docs.password);
       if (req.body.password == docs.password){
         req.session.username = req.body.username;
-        res.redirect('/');
+        res.json({ok:true});
       } else {
-        res.send("wrong username or password");
+        console.log("wrong username or password");
+        res.json({data:"wrong username or password"});
       }
     }
   });
