@@ -15,6 +15,8 @@ router.post('/signup', function(req, res, next){
   var users = db.get('users');
   var data = req.body;
   data.img_path = '../images/' + req.files[0].filename;
+  res.render('signup_password',{data:data});
+  /*
   users.insert(data, function(err, doc){
     if (err){
       res.send(e.stack);
@@ -22,7 +24,25 @@ router.post('/signup', function(req, res, next){
       res.redirect('/users/profile');
     }
   });
+  */
 });
+
+router.post('/signup_password', function(req, res, next){
+  console.log(req.body);
+
+  var db = req.db;
+  var users = db.get('users');
+  var data = req.body;
+
+  users.insert(data, function(err, doc){
+    if (err){
+      res.send(e.stack);
+    }else {
+      res.redirect('/users/profile');
+    }
+ });
+});
+
 
 /* POST user login */
 router.post('/login', function(req, res, next){
