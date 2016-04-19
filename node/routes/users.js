@@ -2,65 +2,56 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', function (req, res, next) {
+    res.send('respond with a resource');
 });
 
 /* Sign up post */
-router.post('/signup', function(req, res, next){
-  console.log(req.body);
-  console.log(req.files);
+router.post('/signup', function (req, res, next) {
+    console.log(req.body);
+    console.log(req.files);
 
-  var db = req.db;
-  var users = db.get('users');
-  var data = req.body;
-  data.img_path = '../images/' + req.files[0].filename;
-  res.render('signup_password',{data:data});
-  /*
-  users.insert(data, function(err, doc){
-    if (err){
-      res.send(e.stack);
-    }else {
-      res.redirect('/users/profile');
-    }
-  });
-  */
+    var db = req.db;
+    var users = db.get('users');
+    var data = req.body;
+    data.img_path = '../images/' + req.files[0].filename;
+    res.render('signup_password', {data: data});
 });
 
-router.post('/signup_password', function(req, res, next){
-  console.log(req.body);
+router.post('/signup_password', function (req, res, next) {
+    console.log(req.body);
 
-  var db = req.db;
-  var users = db.get('users');
-  var data = req.body;
+    var db = req.db;
+    var users = db.get('users');
+    var data = req.body;
 
-  users.insert(data, function(err, doc){
-    if (err){
-      res.send(e.stack);
-    }else {
-      res.redirect('/users/profile');
-    }
- });
+    users.insert(data, function (err, doc) {
+        if (err) {
+            res.send(e.stack);
+        } else {
+            res.redirect('/users/profile');
+        }
+    });
 });
 
 
 /* POST user login */
-router.post('/login', function(req, res, next){
-  console.log(req.body);
-  var db = req.db;
-  var users = db.get('users');
-  users.findOne({username: req.body.username}, function(err, docs){
-    if (err){
-      res.send(err.stack);
-    } else {
-      if (docs != null){
-        console.log('login user ' + docs.username + ' ' + docs.password);
-        res.render('login_password', {username: req.body.username, img_path: docs.img_path});
-      } else {
-        res.send('user does not exist');
-      }
-    }
-  });
+router.post('/login', function (req, res, next) {
+    console.log(req.body);
+    var db = req.db;
+    var users = db.get('users');
+    users.findOne({username: req.body.username}, function (err, docs) {
+        if (err) {
+            res.send(err.stack);
+        } else {
+            if (docs != null) {
+                console.log('login user ' + docs.username + ' ' + docs.password);
+                res.render('login_password', {username: req.body.username, img_path: docs.img_path});
+            } else {
+                res.send('user does not exist');
+            }
+        }
+    });
 });
 
 router.post('/login_password', function(req, res, next){
@@ -88,29 +79,29 @@ router.post('/login_password', function(req, res, next){
 });
 
 /* POST user logout */
-router.get('/logout', function(req, res, next){
-  req.session.destroy();
-  res.redirect('/');
+router.get('/logout', function (req, res, next) {
+    req.session.destroy();
+    res.redirect('/');
 });
 
-router.get('/profile', function(req, res, next){
-  var db = req.db;
-  var users = db.get('users');
-  users.find({},{}, function(e, docs){
-    res.render('profile', {
-      userlist:docs
+router.get('/profile', function (req, res, next) {
+    var db = req.db;
+    var users = db.get('users');
+    users.find({}, {}, function (e, docs) {
+        res.render('profile', {
+            userlist: docs
+        });
     });
-  });
 });
 
-router.get('/info', function(req, res, next){
-  var db = req.db;
-  var users = db.get('users');
-  users.findOne({username: req.session.username},{}, function(e, docs){
-    res.render('user_info', {
-      user:docs
+router.get('/info', function (req, res, next) {
+    var db = req.db;
+    var users = db.get('users');
+    users.findOne({username: req.session.username}, {}, function (e, docs) {
+        res.render('user_info', {
+            user: docs
+        });
     });
-  });
 });
 
 module.exports = router;

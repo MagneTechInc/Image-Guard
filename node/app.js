@@ -11,7 +11,7 @@ var multer = require('multer');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var db = monk('localhost:27017/ge');
+var db = monk('localhost:27017/image-guard');
 
 var app = express();
 
@@ -38,7 +38,7 @@ app.use(function(req,res,next){
   req.db = db;
   next();
 });
-app.use(multer({dest:'../public/images'}).any());
+app.use(multer({dest:'./public/images'}).any());
 
 app.use('/', routes);
 app.use('/users', users);
