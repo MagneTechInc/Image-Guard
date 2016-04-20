@@ -14,10 +14,27 @@ router.post('/signup', function (req, res, next) {
     var db = req.db;
     var users = db.get('users');
     var data = req.body;
-    data.img_path = '../images/' + req.files[0].filename;
-    res.render('signup_password', {data: data});
+
+    users.findOne({username:data.username}, function(err, docs){
+        if (err)
+        {
+            res.send(err);
+        }
+        else if (docs != null)
+        {
+            res.send(403,{message:'Username exists'});
+        }
+        else
+        {
+            data.img_path = '../images/' + req.files[0].filename;
+            res.send(data);
+        }
+    });
+
+
 });
 
+/* Sign up password post */
 router.post('/signup_password', function (req, res, next) {
     console.log(req.body);
 
@@ -29,7 +46,8 @@ router.post('/signup_password', function (req, res, next) {
         if (err) {
             res.send(e.stack);
         } else {
-            res.redirect('/users/profile');
+            req.session.username = req.body.username;
+            res.json({ok: true});
         }
     });
 });
@@ -42,7 +60,7 @@ router.post('/login', function (req, res, next) {
     var users = db.get('users');
     users.findOne({username: req.body.username}, function (err, docs) {
         if (err) {
-            res.send(err.stack);
+            res.send(err);
         } else {
             if (docs != null) {
                 console.log('login user ' + docs.username + ' ' + docs.password);
