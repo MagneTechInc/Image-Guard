@@ -3,6 +3,7 @@ extends layout
 block content
     script.
         window.onload = onReady;
+        var user_info;
         var can;
         var ctx;
         var img;
@@ -10,6 +11,7 @@ block content
         var clickY;
         var selected1;
         var selected2;
+        var retry_chance = 3;
         var blockSize = 160;
         var piecesArray = new Array();
 
@@ -33,8 +35,9 @@ block content
                             username: $("#username")[0].value
                         },
                         success: function (data) {
+                            user_info = data;
                             load(data.img_path);
-                            $("#username")[0].disabled =true;
+                            $("#username")[0].disabled = true;
                         },
                         error: function (error) {
                             alert(error);
@@ -62,6 +65,11 @@ block content
 
         function onImage1Load() {
             var r;
+            piecesArray = new Array();
+            piecesArray1 = new Array();
+            correctOrder = new Array();
+            position = new Array();
+            sequence = new Array();
             for (var i = 0; i < col; i++) {
                 for (var j = 0; j < row; j++) {
                     r = new Rectangle(i * blockSize, j * blockSize, i * blockSize + blockSize, j * blockSize + blockSize);
@@ -108,6 +116,7 @@ block content
         }
 
         function drawImage() {
+            ctx.clearRect(0, 0, 320, 320);
             var r;
             for (var i = 0; i < col; i++) {
                 for (var j = 0; j < row; j++) {
@@ -201,32 +210,45 @@ block content
                     break;
                 }
             }
-
-            if (match) {
-                alert("puzzle complete\nSending sequence (" + sequence + ") to back end");
-                var password = "";
-                for (var i = 0; i < sequence.length; i++) {
-                    password += sequence[i];
-                }
-                $.ajax({
-                    url: "/users/login_password",
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        username: $("#username")[0].value,
-                        password: password
-                    },
-                    success: function (data) {
-                        window.location.replace('/');
-                    },
-                    error: function (error) {
-                        alert(error);
+            if (sequence.length == piecesArray.length) {
+                if (match) {
+                    var password = "";
+                    for (var i = 0; i < sequence.length; i++) {
+                        password += sequence[i];
                     }
-                });
+                    $.ajax({
+                        url: "/users/login_password",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            username: $("#username")[0].value,
+                            password: password
+                        },
+                        success: function (data) {
+                            window.location.replace('/');
+                        },
+                        error: function (error) {
+                            img.src = user_info.img_path;
+                            $('#retry_warning').show().empty().append('<strong>Sequence Warning!</strong>' +
+                                    ' Puzzle pieces were in the wrong position. <br>' + JSON.parse(error.responseText).message);
+                        }
+                    });
+                }
+                else {
+                    console.log("not complete yet");
+                    if (retry_chance-- > 0) {
+                        img.src = user_info.img_path;
+                        $('#retry_warning').show().empty().append('<strong>Login up Warning!</strong>' +
+                                ' Puzzle pieces were in the wrong position.<br>' +
+                                ' Please try again: Left chances: ' + retry_chance);
+                    }
+                    else {
+                        //TODO send ajax request to delete the img
+                        window.location.replace('/login');
+                    }
+                }
             }
-            else {
-                console.log("not complete yet");
-            }
+
 
         }
     div(class="col-sm-offset-2 col-sm-5 ")
@@ -240,6 +262,9 @@ block content
                         div(class="col-sm-10")
                             input(type="name" class="form-control" placeholder="Enter Username" id="username" name="username")
                     div(class="container-fluid" id="canvasContainer")
+                        .row
+                            .col-sm-12
+                                div(class="alert alert-warning fade in" id="retry_warning" style="display: none;")
                         div(class="form-group")
                             div(class="col-sm-6")
                                 img(id="sorry" src="/images/sorry.jpg" style="display:none;")
