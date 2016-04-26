@@ -137,6 +137,7 @@ router.post('/reset', function(req, res, next){
                 }
                 else{
                     data.img_path = '../images/' + req.files[0].filename;
+                    data.message = "correct"
                     res.send(data);
                 }
             } else {
