@@ -64,7 +64,7 @@ router.post('/login', function (req, res, next) {
         } else {
             if (docs != null) {
                 console.log('login user ' + docs.username + ' ' + docs.password);
-                res.render('login_password', {username: req.body.username, img_path: docs.img_path});
+                res.send({status:"ok", username: req.body.username, img_path: docs.img_path});
             } else {
                 res.send('user does not exist');
             }
