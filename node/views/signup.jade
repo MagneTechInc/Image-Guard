@@ -261,11 +261,12 @@ block content
             $('#signupForm').submit(function(){
                 $(this).ajaxSubmit({
                     error: function(err){
-                        alert(err.status);
                         if (err.status == 403)
                         {
-                            alert("User exists\nTry another one");
-                            window.location.replace('/signup');
+                            $('#retry_warning').show().empty().append('<strong>' + JSON.parse(err.responseText).message + '</strong>');
+                            $('#username').val("");
+                            $('#email').val("");
+                            $('#pic').val("");
                         }
                     },
                     success: function(data){
@@ -278,6 +279,7 @@ block content
                         $('#submitBtn').prop('disabled', true);
                         $('#puzzleDiv').show();
                         img.src = data.img_path;
+                        $('#retry_warning').hide();
                     }
                 });
                 return false;
@@ -308,11 +310,11 @@ block content
                         div(class="col-sm-6" style="text-align:right")
                             a(href="password_reset") Reset Password
                             input(type="hidden"  id="origin" name="origin" value="signup")
-
+                .row
+                    .col-sm-12
+                        div(class="alert alert-warning fade in" id="retry_warning" style="display: none;")
                 div(class= "container-fluid" id="puzzleDiv" style="display: none;")
-                    .row
-                        .col-sm-12
-                            div(class="alert alert-warning fade in" id="retry_warning" style="display: none;")
+
                     .row
                         div(class= "col-sm-6")
                             img(id = "sorry" src = "/images/sorry.jpg" style = "display:none;")
