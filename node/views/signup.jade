@@ -47,6 +47,7 @@ block content
             img = new Image();
             img.onload = onImage1Load;
             //img.src = '/images/cat.png';
+
         }
 
         function onImage1Load() {
@@ -306,6 +307,7 @@ block content
                             button(type="submit" class="btn btn-default" id="submitBtn") Submit
                         div(class="col-sm-6" style="text-align:right")
                             a(href="password_reset") Reset Password
+                            input(type="hidden"  id="origin" name="origin" value="signup")
 
                 div(class= "container-fluid" id="puzzleDiv" style="display: none;")
                     .row
