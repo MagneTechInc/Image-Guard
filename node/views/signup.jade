@@ -6,6 +6,7 @@ block content
         window.onload = onReady;
 
         var user_info;
+        var retry_chance = 3;
 
         var can;
         var ctx;
@@ -15,18 +16,18 @@ block content
         var selected1;
         var selected2;
         var blockSize = 160;
-        var piecesArray = new Array();
+        var piecesArray;
 
         var can1;
         var ctx1;
-        var piecesArray1 = new Array();
+        var piecesArray1;
 
         var col = 2;
         var row = 2;
 
-        var correctOrder = new Array();
-        var position = new Array();
-        var sequence = new Array();
+        var correctOrder;
+        var position;
+        var sequence;
 
 
 
@@ -46,12 +47,15 @@ block content
             img = new Image();
             img.onload = onImage1Load;
             //img.src = '/images/cat.png';
+
         }
 
         function onImage1Load() {
-            //piecesArray = new Array();
-            //correctOrder = new Array();
-            //position = new Array();
+            piecesArray = new Array();
+            piecesArray1 = new Array();
+            correctOrder = new Array();
+            position = new Array();
+            sequence = new Array();
             var r;
             for (var i = 0; i < col; i++) {
                 for (var j = 0; j < row; j++) {
@@ -76,32 +80,9 @@ block content
             this.height = bottom - top;
         }
 
-        /*
-
-         function scrambleArray(ar, times) {
-         var count = 0;
-         var temp;
-         var index1;
-         var index2;
-
-         while (count < times) {
-         index1 = Math.floor(Math.random() * piecesArray.length);
-         index2 = Math.floor(Math.random() * piecesArray.length);
-
-         temp = piecesArray[index1];
-         piecesArray[index1] = piecesArray[index2];
-         piecesArray[index2] = temp;
-
-         temp = position[index1];
-         position[index1] = position[index2];
-         position[index2] = temp;
-
-         count++;
-         }
-         }
-         */
-
         function drawImage() {
+            ctx.clearRect(0, 0, 320, 320);
+            ctx1.clearRect(0, 0, 320, 320);
             var r;
             for (var i = 0; i < col; i++) {
                 for (var j = 0; j < row; j++) {
@@ -162,9 +143,6 @@ block content
                 drawX *= blockSize;
                 drawY *= blockSize;
 
-                ctx.clearRect(0, 0, 320, 320);
-                ctx1.clearRect(0, 0, 320, 320);
-
                 if (selected1 != undefined && selected2 != undefined) {
                     selected1 = selected2 = undefined;
                 }
@@ -198,9 +176,6 @@ block content
 
                 drawX *= blockSize;
                 drawY *= blockSize;
-
-                ctx.clearRect(0, 0, 320, 320);
-                ctx1.clearRect(0, 0, 320, 320)
 
                 if (selected1 != undefined) {
                     if (selected2 == undefined) {
@@ -237,7 +212,6 @@ block content
             }
 
             if (match) {
-                alert("puzzle complete\nSending sequence (" + sequence + ") to back end");
                 var password = "";
                 for (var i = 0; i < sequence.length; i++) {
                     password += sequence[i];
@@ -263,7 +237,19 @@ block content
 
             }
             else if (isEmpty) {
-                alert("lose puzzle game\nif attemp is less than 3, refresh page");
+                drawImage();
+                if (retry_chance-->0)
+                {
+                    img.src = user_info.img_path;
+                    $('#retry_warning').show().empty().append('<strong>Sign up Warning!</strong>' +
+                            ' Puzzle pieces were in the wrong position.<br>' +
+                            ' Please try again: Left chances: ' + retry_chance);
+                }
+                else
+                {
+                    //TODO send ajax request to delete the img
+                    window.location.replace('/signup');
+                }
             }
             else {
                 console.log("not complete yet");
@@ -321,9 +307,13 @@ block content
                             button(type="submit" class="btn btn-default" id="submitBtn") Submit
                         div(class="col-sm-6" style="text-align:right")
                             a(href="password_reset") Reset Password
+                            input(type="hidden"  id="origin" name="origin" value="signup")
 
                 div(class= "container-fluid" id="puzzleDiv" style="display: none;")
-                    div(class= "row")
+                    .row
+                        .col-sm-12
+                            div(class="alert alert-warning fade in" id="retry_warning" style="display: none;")
+                    .row
                         div(class= "col-sm-6")
                             img(id = "sorry" src = "/images/sorry.jpg" style = "display:none;")
                             canvas(id = "myCanvas" width = "320" height = "320" style = "margin:0 auto; width:320px; height:320px; border: 4px solid #cc6699;" onclick = "onCanvasClick(event);")
